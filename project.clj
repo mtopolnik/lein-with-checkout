@@ -1,4 +1,4 @@
-(defproject com.ingemark/lein-with-checkout "0.1.0-SNAPSHOT"
+(defproject com.ingemark/lein-with-checkout "0.1.0"
   :description "Check out a revision from git and apply tasks on it"
   :url "https://github.com/Inge-mark/lein-with-checkout"
   :license {:name "Eclipse Public License"

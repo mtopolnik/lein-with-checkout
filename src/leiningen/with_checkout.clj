@@ -17,9 +17,16 @@
       (when-not (zero? res) (abort "Command failed with exit code %s: %s" res args))
       res)))
 
-(defn with-checkout [project tag & args]
-  (let [tag (if (= tag :latest) "`git tag | tail -1`" tag)
-        checkout-dir "target/lein-with-checkout"]
+(defn with-checkout
+  "Check out a revision from git and apply tasks on it"
+  [project tag & args]
+  (let [checkout-dir "target/lein-with-checkout"
+        tag (if (= tag ":latest")
+              (let [r (sh/sh "git" "describe" "--tags" "--abbrev=0")]
+                (when (or (not (zero? (:exit r))) (s/blank? (:out r)))
+                  (abort "Cannot determine the latest tag: %s" (str (:err r) (:out r))))
+                (s/trim (:out r)))
+              tag)]
     (sh! "mkdir" "-p" checkout-dir)
     (try
       (sh! "sh" "-c" (format "git archive %s | tar -xC %s" tag checkout-dir))
